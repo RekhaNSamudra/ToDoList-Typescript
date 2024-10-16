@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChangeEvent, FC, useState } from 'react';
+import { ITask } from './Interfaces';
+import ToDoList from './Components/ToDoList';
 
-function App() {
+const App: FC = () => {
+  const [task, setTask] = useState("");
+  const [todoList, setTodoList] = useState<ITask[]>([]);
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTask(event.target.value)
+  }
+
+  const addTask = () => {
+    const newTask = { taskName: task }
+    setTodoList([...todoList, newTask])
+    setTask("")
+  }
+
+  const deleteTask = (taskNameToDelete: string) => {
+    setTodoList(todoList.filter((todo) => todo.taskName !== taskNameToDelete))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h3>ToDo List - Typescript React App</h3>
+      <input type="text" placeholder='Enter Task...' onChange={handleInputChange} value={task} />
+      <button onClick={addTask}>Add Task</button>
+      {todoList.map((todo: ITask, index) => {
+        return <ToDoList key={index} todo={todo} deleteTask={deleteTask} />
+      })}
     </div>
   );
 }
